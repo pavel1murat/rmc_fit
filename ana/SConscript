@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+#
+# Script to build the files found in this directory.
+#------------------------------------------------------------------------------
+import os
+Import('env')
+Import('stntuple_helper')
+#------------------------------------------------------------------------------
+# 2016-10-10: STNTUPLE link: add ROOT 'EG' library after 'Physics' library
+#------------------------------------------------------------------------------
+rootlibs = env['ROOTLIBS']
+if ( not ("EG"   in rootlibs)): rootlibs.insert(rootlibs.index("Physics")+1,"EG");
+
+helper = stntuple_helper(env);
+
+helper.handle_dictionaries();
+
+skip_list     = []
+
+stntuple_libs = [];
+murat_libs    = ["murat_plot"]
+
+libs          = stntuple_libs + murat_libs + [
+                rootlibs,
+                ];
+
+list_of_cc_files = Glob('*.cc',strings=True);
+helper.build_libs(list_of_cc_files,skip_list,libs);
+# print "tmpdir:"+env['TMP_LIB_DIR']

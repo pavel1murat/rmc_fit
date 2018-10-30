@@ -1,0 +1,17 @@
+CVS
+*/CVS
+*/*/CVS
+*/*/*/CVS
+*.root
+*.pdf
+*.hist
+*.art
+*~
+.*~
+*.*~
+*/*.*~
+*/*/*.*~
+*/*.d
+*/*.so
+*.png
+*_rdict.pcm

@@ -1,0 +1,65 @@
+//
+
+
+#include "ana/rmc_data.hh"
+#include "TMath.h"
+
+ClassImp(rmc_data)
+
+//-----------------------------------------------------------------------------
+rmc_data::rmc_data() {
+}
+
+//-----------------------------------------------------------------------------
+rmc_data::~rmc_data() {
+}
+
+
+//-----------------------------------------------------------------------------
+// typical resolution scale is of the order of a few MeV,
+// so use 0.01 MeV as an approximation of a perfect resolution
+// function integrates to 1.
+//-----------------------------------------------------------------------------
+double rmc_data::delta_function_response(double E, double Er) {
+  double sigma(0.01); // in MeV
+
+  double dx = (Er-E)/sigma;
+  double f = 1/(sigma*sqrt(2*M_PI))*TMath::Exp(-dx*dx/2);
+  return f;
+}
+
+
+//-----------------------------------------------------------------------------
+// get experimental data
+//-----------------------------------------------------------------------------
+int rmc_data::get_experimental_data(int Year, const char* Target, rmc_data::Data_t* Data) {
+
+  TString target(Target);
+
+  if (Year == 1995) {
+    if      (target == "Al" ) GetBergbusch_thesis_1995_fig_5_2_Al (Data);
+    else if (target == "O16") GetBergbusch_thesis_1995_fig_5_3_O16(Data);
+  }
+  else if (Year == 1998) {
+    if      (target == "Ni58") GetGorringe_1998_Ni58(Data);
+    else if (target == "Ni60") GetGorringe_1998_Ni60(Data);
+    else if (target == "Ni62") GetGorringe_1998_Ni62(Data);
+  }
+  else if (Year == 1999) {
+    if (target == "O16") GetArmstrong_1999_fig_6_O16(Data);
+    if (target == "Ti" ) GetArmstrong_1999_fig_14_Ti(Data);
+  }
+  else if (Year == 1988) {
+    if (target == "O16") GetFrischknecht_1988_O16_table_II(Data);
+  }
+  else if (Year == 1992) {
+    if      (target == "Al") GetArmstrong_1992_fig_6a_Al(Data);
+    else if (target == "Si") GetArmstrong_1992_fig_6b_Si(Data);
+  }
+  else if (Year == 1991) {
+    if      (target == "Ca40") GetArmstrong_1991_fig_18_Ca40(Data);
+  }
+
+  return 0;
+}
+
