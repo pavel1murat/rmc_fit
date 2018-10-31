@@ -38,8 +38,11 @@ public:
 // tables - 2 MeV/bin, plots - 1 MeV/bin
 //-----------------------------------------------------------------------------
   int GetGorringe_1998_Ni58      (Data_t* Data);
+  int GetGorringe_1998_Ni58_2MeV (Data_t* Data);
   int GetGorringe_1998_Ni60      (Data_t* Data);
+  int GetGorringe_1998_Ni60_2MeV (Data_t* Data);
   int GetGorringe_1998_Ni62      (Data_t* Data);
+  int GetGorringe_1998_Ni62_2MeV (Data_t* Data);
 //-----------------------------------------------------------------------------
 // Bergbusch MS thesis'1995 - several spectra, response, strictly speaking,
 // unknown. Can only hope it should be close to the 1998 response, as the spectra

@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------------
 #include "ana/rmc_data.hh"
 #include "TAxis.h"
+#include "TROOT.h"
 
 int rmc_data::GetArmstrong_1992_fig_9b_Sn(Data_t* Data) {
   // Phys Rev C v46 i3 p1094 (1992)
@@ -27,8 +28,9 @@ int rmc_data::GetArmstrong_1992_fig_9b_Sn(Data_t* Data) {
     99.5, 0.,
     -1 };
 
-  if (Data->fHist) delete Data->fHist;
-  Data->fHist = new TH1F("h_Armstrong_1992_fig_9b_Sn","",nbins,xmin,xmax);
+  const char hist_name[] = "h_Armstrong_1992_fig_9b_Sn";
+  while (TObject* o = gROOT->FindObject(hist_name)) delete o;
+  Data->fHist = new TH1F(hist_name,"",nbins,xmin,xmax);
 
   for (int np=0; data[2*np] > 0; np++) {
     int bin = (data[2*np]-xmin)/bin_width +1 ;

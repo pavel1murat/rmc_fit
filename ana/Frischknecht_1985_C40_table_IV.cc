@@ -4,6 +4,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include  "ana/rmc_data.hh"
 #include "TAxis.h"
+#include "TROOT.h"
+
 int rmc_data::GetFrischknecht_1985_Ca40_table_IV(Data_t* Data) {
   // PRC v38 i5 p1996
   // data from Table II
@@ -25,8 +27,9 @@ int rmc_data::GetFrischknecht_1985_Ca40_table_IV(Data_t* Data) {
     95.5, 0.03, 0.04, 96.5, 0.04, 0.04, 97.5,-0.03, 0.04, 98.5,-0.02, 0.03, 99.5, 0.01, 0.04,
     -1 };
 
-  if (Data->fHist) delete Data->fHist;
-  Data->fHist = new TH1F("h_Frischknecht_1988_O16","",nbins,xmin,xmax);
+  const char hist_name[] = "h_Frischknecht_1988_O16";
+  while (TObject* o = gROOT->FindObject(hist_name)) delete o;
+  Data->fHist = new TH1F(hist_name,"",nbins,xmin,xmax);
 
   for (int np=0; data[3*np] > 0; np++) {
     int bin = (data[3*np]-xmin)/bin_width +1;

@@ -3,6 +3,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include "ana/rmc_data.hh"
 #include "TAxis.h"
+#include "TROOT.h"
+
 //-----------------------------------------------------------------------------
 int rmc_data::GetBergbusch_thesis_1995_fig_5_3_O16(Data_t* Data) {
   // Bergbusch thesis 
@@ -26,8 +28,9 @@ int rmc_data::GetBergbusch_thesis_1995_fig_5_3_O16(Data_t* Data) {
     91.5,   0.0, 92.5,   0.0, 94.5,   0.0, 95.5,   0.0,
     -1 };
 
-  if (Data->fHist) delete Data->fHist;
-  Data->fHist = new TH1F("h_bergbusch_thesis_1995_O16_fig_5_3_O16","",nbins,xmin,xmax);
+  const char hist_name[] = "h_bergbusch_thesis_1995_O16_fig_5_3_O16";
+  while (TObject* o = gROOT->FindObject(hist_name)) delete o;
+  Data->fHist = new TH1F(hist_name,"",nbins,xmin,xmax);
 
   for (int np=0; data[2*np] > 0; np++) {
     int bin = (data[2*np]-xmin)/bin_width +1;

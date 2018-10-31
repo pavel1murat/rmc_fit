@@ -41,9 +41,12 @@ int rmc_data::get_experimental_data(int Year, const char* Target, rmc_data::Data
     else if (target == "O16") GetBergbusch_thesis_1995_fig_5_3_O16(Data);
   }
   else if (Year == 1998) {
-    if      (target == "Ni58") GetGorringe_1998_Ni58(Data);
-    else if (target == "Ni60") GetGorringe_1998_Ni60(Data);
-    else if (target == "Ni62") GetGorringe_1998_Ni62(Data);
+    if      (target == "Ni58"     ) GetGorringe_1998_Ni58     (Data);
+    if      (target == "Ni58_2MeV") GetGorringe_1998_Ni58_2MeV(Data);
+    else if (target == "Ni60"     ) GetGorringe_1998_Ni60     (Data);
+    if      (target == "Ni60_2MeV") GetGorringe_1998_Ni60_2MeV(Data);
+    else if (target == "Ni62"     ) GetGorringe_1998_Ni62     (Data);
+    if      (target == "Ni62_2MeV") GetGorringe_1998_Ni62_2MeV(Data);
   }
   else if (Year == 1999) {
     if (target == "O16") GetArmstrong_1999_fig_6_O16(Data);
