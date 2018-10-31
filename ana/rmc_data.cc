@@ -53,8 +53,12 @@ int rmc_data::get_experimental_data(int Year, const char* Target, rmc_data::Data
     if (target == "O16") GetFrischknecht_1988_O16_table_II(Data);
   }
   else if (Year == 1992) {
-    if      (target == "Al") GetArmstrong_1992_fig_6a_Al(Data);
-    else if (target == "Si") GetArmstrong_1992_fig_6b_Si(Data);
+    if      (target == "Al"  ) GetArmstrong_1992_fig_6a_Al  (Data);
+    else if (target == "Si"  ) GetArmstrong_1992_fig_6b_Si  (Data);
+    else if (target == "Ca40") GetArmstrong_1992_fig_8b_Ca40(Data);
+    else if (target == "Mo"  ) GetArmstrong_1992_fig_9a_Mo  (Data);
+    else if (target == "Sn"  ) GetArmstrong_1992_fig_9b_Sn  (Data);
+    else if (target == "Pb"  ) GetArmstrong_1992_fig_9c_Pb  (Data);
   }
   else if (Year == 1991) {
     if      (target == "Ca40") GetArmstrong_1991_fig_18_Ca40(Data);
