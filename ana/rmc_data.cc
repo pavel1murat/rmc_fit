@@ -28,13 +28,25 @@ double rmc_data::delta_function_response(double E, double Er) {
   return f;
 }
 
+//-----------------------------------------------------------------------------
+int rmc_data::get_response_function(const char* Response, double (**F)(double,double)) {
+  int     rc (0);
+  TString response(Response);
+  
+  if      (response == "1992") *F = triumf_response_1992;
+  else if (response == "1998") *F = triumf_response_1998;
+  else    rc = -1;
+
+  return rc;
+}
 
 //-----------------------------------------------------------------------------
 // get experimental data
 //-----------------------------------------------------------------------------
-int rmc_data::get_experimental_data(int Year, const char* Target, rmc_data::Data_t* Data) {
+int rmc_data::get_experimental_data(int Year, const char* Target, const char* Response, rmc_data::Data_t* Data) {
 
-  TString target(Target);
+  TString target(Target), response(Response);
+;
 
   if (Year == 1995) {
     if      (target == "Al" ) GetBergbusch_thesis_1995_fig_5_2_Al (Data);
@@ -66,7 +78,12 @@ int rmc_data::get_experimental_data(int Year, const char* Target, rmc_data::Data
   else if (Year == 1991) {
     if      (target == "Ca40") GetArmstrong_1991_fig_18_Ca40(Data);
   }
-
+//-----------------------------------------------------------------------------
+// force response, if it was requested explicitly
+//-----------------------------------------------------------------------------
+  if      (response == "1992") Data->fResp = triumf_response_1992;
+  else if (response == "1998") Data->fResp = triumf_response_1998;
+  
   return 0;
 }
 

@@ -79,7 +79,7 @@ int rmc_fit::get_response_hist(double Response(double,double), double E, TH1F* H
 // data response function, return resulting TF1
 // 'Func' has just one parameter: overall normalization
 //-----------------------------------------------------------------------------
-int rmc_fit::get_smeared_closure_spectrum(double KMax,double Response(double,double),
+int rmc_fit::get_convoluted_closure_spectrum(double KMax,double Response(double,double),
 					  TF1** Func, int Debug) {
   
   fNFunctions++;
@@ -136,16 +136,20 @@ int rmc_fit::get_smeared_closure_spectrum(double KMax,double Response(double,dou
 //        with a response function corresponding to the data defined by Year and Target
 //        *doesn't make much sense* ...
 //-----------------------------------------------------------------------------
-int rmc_fit::test3(int Year, const char* Target, double KMax) {
+int rmc_fit::plot_convoluted_closure_approximation_spectrum(const  char* ResponseModel,
+							    double KMax               ) {
   TF1* f;
+  double (*resp)(double,double) {NULL};
+  
   int debug(1);
 
-  fYear   = Year;
-  fTarget = Target;
-
-  fRmcData->get_experimental_data(Year,Target,&fData);
+					// use Year / Target to get the response function
   
-  get_smeared_closure_spectrum(KMax,fData.fResp,&f,debug);
+  fRmcData->get_response_function(ResponseModel,&resp);
+
+					// convolute closure approximation with the response function
+  
+  get_convoluted_closure_spectrum(KMax,resp,&f,debug);
 
   f->SetLineWidth(1);
   f->Draw("same");
@@ -156,22 +160,24 @@ int rmc_fit::test3(int Year, const char* Target, double KMax) {
 //-----------------------------------------------------------------------------
 // print detector response for a given photon (e+e-) energy 'E' +/- 10 MeVx
 //-----------------------------------------------------------------------------
-void rmc_fit::test0(int Year, const char* Target, double E) {
+void rmc_fit::test0(const char* ResponseModel, double E) {
 
-  fRmcData->get_experimental_data(Year,Target,&fData);
+  double (*resp)(double,double) {NULL};
+
+  fRmcData->get_response_function(ResponseModel,&resp);
 
   double Er = E-10;
 
-  double p  = fData.fResp(E,Er);
+  double p  = resp(E,Er);
 
   printf(" E, Er, p = %12.5e %12.5e %12.5e\n",E,Er,p);
 
   Er        = E;
-  p         = fData.fResp(E,Er);
+  p         = resp(E,Er);
   printf(" E, Er, p = %12.5e %12.5e %12.5e\n",E,Er,p);
 
   Er        = E+10;
-  p         = fData.fResp(E,Er);
+  p         = resp(E,Er);
   printf(" E, Er, p = %12.5e %12.5e %12.5e\n",E,Er,p);
 }
 
@@ -179,30 +185,17 @@ void rmc_fit::test0(int Year, const char* Target, double E) {
 // test1: detector response for a given photon (e+e-) energy 'E'
 // assume 'Al' data are always there
 //-----------------------------------------------------------------------------
-void rmc_fit::test1(int Year, const char* Target, double E, double EMin, double EMax, int NBins) {
+void rmc_fit::plot_response_function(const char* ResponseModel,
+				     double E, double EMin, double EMax, int NBins) {
 
-  TH1F* h1 = new TH1F("h_f","h",NBins,EMin,EMax);
+  double (*resp)(double,double) {NULL};
 
-  fRmcData->get_experimental_data(Year,Target,&fData);
+  fRmcData->get_response_function(ResponseModel,&resp);
 
-  get_response_hist(fData.fResp,E,h1);
-  h1->Draw();
-}
+  TH1F* h1 = new TH1F(Form("h_f_%s_%i",GetName(),fNFunctions),"h",NBins,EMin,EMax);
+  fNFunctions++;
 
-//-----------------------------------------------------------------------------
-// test2: detector response for a given photon (e+e-) energy 'E'
-// also calculate an integral of the response function - acceptance at a given E0
-//-----------------------------------------------------------------------------
-void rmc_fit::test2(int Year, const char* Target, double E) {
-
-  int nbins = 3000;
-
-  fNCanvases++;
-  TH1F* h1 = new TH1F(Form("h_%s_test2_%i",GetName(),fNCanvases),"h",nbins,0,300);
-
-  fRmcData->get_experimental_data(Year,Target,&fData);
-
-  get_response_hist(fData.fResp,E,h1);
+  get_response_hist(resp,E,h1);
   h1->Draw();
   
   printf(" integral: %12.5e\n",h1->Integral()*h1->GetBinWidth(0));
@@ -218,14 +211,19 @@ void rmc_fit::test2(int Year, const char* Target, double E) {
 // test3(4,87,3.2)
 // test3(5,86,3. )
 //-----------------------------------------------------------------------------
-void rmc_fit::fit(int Year, const char* Target, double KMax, double MinFitE, double MaxFitE) {
+void rmc_fit::fit(int         Year         ,
+		  const char* Target       ,
+		  const char* ResponseModel,
+		  double      KMax         ,
+		  double      MinFitE      ,
+		  double      MaxFitE      ) {
   TF1* f;
   
-  fRmcData->get_experimental_data(Year,Target,&fData);
+  fRmcData->get_experimental_data(Year,Target,ResponseModel,&fData);
   
   fData.fHist->GetXaxis()->SetRangeUser(50,99.9);
 
-  get_smeared_closure_spectrum(KMax,fData.fResp,&f);
+  get_convoluted_closure_spectrum(KMax,fData.fResp,&f);
   
   double hist_int = fData.fHist->Integral()*fData.fHist->GetBinWidth(1);
   double fun_int  = f->Integral(55,100,1.e-5);
@@ -265,7 +263,8 @@ void rmc_fit::fit(int Year, const char* Target, double KMax, double MinFitE, dou
 // scan range of kMax values [KMax1, KMax2] in 'NSteps' steps
 // NSteps = 0: perform fit for only one value of kMax (KMax1)
 //-----------------------------------------------------------------------------
-void rmc_fit::scan_kmax_range(int Year, const char* Target, double KMax1, double KMax2, int NSteps,
+void rmc_fit::scan_kmax_range(int Year, const char* Target, const char* ResponseModel,
+			      double KMax1, double KMax2, int NSteps,
 			      double MinFitE, double MaxFitE) {
 
   double* kmax    = new double [NSteps+1];
@@ -276,7 +275,7 @@ void rmc_fit::scan_kmax_range(int Year, const char* Target, double KMax1, double
 //-----------------------------------------------------------------------------
 // retrieve the experimental spectrum to fit
 //-----------------------------------------------------------------------------
-  fRmcData->get_experimental_data(Year,Target,&fData);
+  fRmcData->get_experimental_data(Year,Target,ResponseModel,&fData);
   
   fData.fHist->GetXaxis()->SetRangeUser(50,99.9);
 
@@ -300,7 +299,7 @@ void rmc_fit::scan_kmax_range(int Year, const char* Target, double KMax1, double
 //-----------------------------------------------------------------------------
 // get closure approximation spectrum convoluted with the detector response
 //-----------------------------------------------------------------------------
-    get_smeared_closure_spectrum(kmax[i],fData.fResp,f+i);
+    get_convoluted_closure_spectrum(kmax[i],fData.fResp,f+i);
 //-----------------------------------------------------------------------------
 // perform the fit
 //-----------------------------------------------------------------------------
@@ -367,7 +366,7 @@ void rmc_fit::scan_kmax_range(int Year, const char* Target, double KMax1, double
   double kmax_best = f_pol2->GetParameter(2);
 
   TF1* fbest;
-  get_smeared_closure_spectrum(kmax_best,fData.fResp,&fbest);
+  get_convoluted_closure_spectrum(kmax_best,fData.fResp,&fbest);
 
   fbest->SetParameter(0,fData.fHist->Integral()/fbest->Integral(55,100,1.e-5)/1.5);
     

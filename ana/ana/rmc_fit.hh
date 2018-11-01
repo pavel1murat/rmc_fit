@@ -25,33 +25,34 @@ public:
   rmc_fit(const char* Name = "rmc_fit");
   ~rmc_fit();
 
-  // static double response_1992(double E, double Er);
-  // static double response_1998(double E, double Er);
-
-  //  static double fun_response_1998    (double* X, double* P);
-
   static double fit_pol2             (double* X, double* P);
   static double fun_closure          (double* X, double* P);
 
   int           get_response_hist    (double Response(double,double), double E, TH1F* Hist);
 
-  int           get_smeared_closure_spectrum(double KMax, double Response(double,double),
-					     TF1** Func, int Debug = 0);
+  int           get_convoluted_closure_spectrum(double KMax                   ,
+						double Response(double,double),
+						TF1**  Func                   ,
+						int    Debug = 0              );
 
 					// fit functions
   
-  void          fit            (int Year, const char* Target, double KMax = 90.,
-				double MinFitE = 57., double MaxFitE = 100.);
+  void          fit            (int Year, const char* Target, const char* ResponseModel,
+				double KMax = 90., double MinFitE = 57., double MaxFitE = 100.);
 
-  void          scan_kmax_range(int Year, const char* Target, double EMin, double EMax,
+  void          scan_kmax_range(int Year, const char* Target, const char* ResponseModel,
+				double EMin, double EMax,
 				int NSteps=10, double MinFitE = 57, double MaxFitE=100);
 
-					// test functions
+//-----------------------------------------------------------------------------
+// test functions
+//-----------------------------------------------------------------------------
+  void          test0(const char* ResponseModel, double E);
 
-  void          test0(int Year, const char* Target, double E);
-  void          test1(int Year, const char* Target, double E, double EMin, double EMax, int NBins=100);
-  void          test2(int Year, const char* Target, double E);
-  int           test3(int Year, const char* Target, double KMax);
+  void          plot_response_function(const char* ResponseModel, double E,
+				       double EMin=0, double EMax=300, int NBins=3000);
+  
+  int           plot_convoluted_closure_approximation_spectrum(const char* ResponseModel, double KMax);
 
   ClassDef(rmc_fit,0)
 };

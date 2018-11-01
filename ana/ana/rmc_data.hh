@@ -15,14 +15,16 @@ public:
   
   rmc_data();
   ~rmc_data();
+					// Response: "1992" or "1998", if NULL, then - default
 
-  int  get_experimental_data(int Year, const char* Target, Data_t* Data);
+  int  get_experimental_data(int Year, const char* Target, const char* Response, Data_t* Data);
 //-----------------------------------------------------------------------------
 // response parameterization
 //-----------------------------------------------------------------------------
   static double  delta_function_response(double E, double Er);
   static double  triumf_response_1992   (double E, double Er);
   static double  triumf_response_1998   (double E, double Er);
+  int            get_response_function  (const char* Response, double (**f)(double,double));
 //-----------------------------------------------------------------------------
 // same response parameterization, different format - for TF1's and ROOT fits
 //-----------------------------------------------------------------------------
