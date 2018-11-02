@@ -106,7 +106,7 @@ int rmc_fit::get_convoluted_closure_spectrum(double KMax,double Response(double,
   for (int i=1; i<=1000; i++) {
     double e = (i-1/2)*0.1;
 
-    if (e < 55) continue;
+    if (e < 40) continue;
 
     double w = f_closure->Eval(e);
 
@@ -242,7 +242,8 @@ void rmc_fit::fit(int         Year         ,
   fNCanvases++;
   TCanvas* c = new TCanvas(Form("c_%s_%i",GetName(),fNCanvases),"fit",1200,700);
 
-  fData.fHist->Fit(f,"QL","p,e",MinFitE,MaxFitE);
+  //  fData.fHist->Fit(f,"QL","p,e",MinFitE,MaxFitE);
+  fData.fHist->Fit(f,"Q","p,e",MinFitE,MaxFitE);
 
   c->Modified();
   c->Update();
@@ -254,6 +255,13 @@ void rmc_fit::fit(int         Year         ,
   
   printf("kMax, chi2, ndof, chi2/ndof, anorm = %12.5f %12.5e %3i %12.5e %12.5e\n",
 	 KMax, chi2, ndof, chi2dof, anorm);
+
+  for(int i=57; i<=100; i++) {
+    double x = i+0.5;
+    double dat = fData.fHist->GetBinContent(i+1);
+    double fv = f->Eval(x);
+    printf("x, dat, fv : %12.5f %12.5f %12.5f \n",x,dat,fv);
+  }
 }
 
 
@@ -392,7 +400,8 @@ void rmc_fit::scan(int Year, const char* Target, const char* ResponseModel,
     //    c_fit->Update();
     //    Getline("hit <RETURN>");
     
-    fData.fHist->Fit(f[i],"QL","",MinFitE,MaxFitE);
+    //    fData.fHist->Fit(f[i],"QL","",MinFitE,MaxFitE);
+    fData.fHist->Fit(f[i],"Q","",MinFitE,MaxFitE);
     
     //    c_fit->Modified();
     //    c_fit->Update();
@@ -443,7 +452,8 @@ void rmc_fit::scan(int Year, const char* Target, const char* ResponseModel,
 
   fbest->SetParameter(0,fData.fHist->Integral()/fbest->Integral(55,100,1.e-5)/1.5);
     
-  fData.fHist->Fit(fbest,"L","",MinFitE,MaxFitE);
+  //  fData.fHist->Fit(fbest,"L","",MinFitE,MaxFitE);
+  fData.fHist->Fit(fbest,"","",MinFitE,MaxFitE);
 
   fData.fHist->Draw("ep");
 //-----------------------------------------------------------------------------
@@ -564,7 +574,8 @@ void rmc_fit::nscan(int Year, const char* Target, const char* ResponseModel,
   double best_norm = fData.fHist->Integral()/fbest->Integral(55,100,1.e-5)/fbest->GetParameter(0);
   fbest->SetParameter(0,best_norm);
     
-  fData.fHist->Fit(fbest,"L","",MinFitE,MaxFitE);
+  //  fData.fHist->Fit(fbest,"L","",MinFitE,MaxFitE);
+  fData.fHist->Fit(fbest,"","",MinFitE,MaxFitE);
 
   fData.fHist->Draw("ep");
 //-----------------------------------------------------------------------------
