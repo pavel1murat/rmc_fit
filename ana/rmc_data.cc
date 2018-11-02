@@ -46,11 +46,10 @@ int rmc_data::get_response_function(const char* Response, double (**F)(double,do
 int rmc_data::get_experimental_data(int Year, const char* Target, const char* Response, rmc_data::Data_t* Data) {
 
   TString target(Target), response(Response);
-;
 
-  if (Year == 1995) {
-    if      (target == "Al" ) GetBergbusch_thesis_1995_fig_5_2_Al (Data);
-    else if (target == "O16") GetBergbusch_thesis_1995_fig_5_3_O16(Data);
+  if      (Year == 1999) {
+    if (target == "O16") GetArmstrong_1999_fig_6_O16(Data);
+    if (target == "Ti" ) GetArmstrong_1999_fig_14_Ti(Data);
   }
   else if (Year == 1998) {
     if      (target == "Ni58"     ) GetGorringe_1998_Ni58     (Data);
@@ -60,12 +59,13 @@ int rmc_data::get_experimental_data(int Year, const char* Target, const char* Re
     else if (target == "Ni62"     ) GetGorringe_1998_Ni62     (Data);
     if      (target == "Ni62_2MeV") GetGorringe_1998_Ni62_2MeV(Data);
   }
-  else if (Year == 1999) {
-    if (target == "O16") GetArmstrong_1999_fig_6_O16(Data);
-    if (target == "Ti" ) GetArmstrong_1999_fig_14_Ti(Data);
-  }
-  else if (Year == 1988) {
-    if (target == "O16") GetFrischknecht_1988_O16_table_II(Data);
+  else if (Year == 1995) {
+    if      (target == "Al" ) GetBergbusch_thesis_1995_fig_5_2_Al (Data);
+    else if (target == "Si" ) GetBergbusch_thesis_1995_fig_5_2_Si (Data);
+    else if (target == "O16") GetBergbusch_thesis_1995_fig_5_3_O16(Data);
+    else if (target == "Ti" ) GetBergbusch_thesis_1995_fig_5_3_Ti (Data);
+    else if (target == "Ag" ) GetBergbusch_thesis_1995_fig_5_8_Ag (Data);
+    else if (target == "Zr" ) GetBergbusch_thesis_1995_fig_5_8_Zr (Data);
   }
   else if (Year == 1992) {
     if      (target == "Al"  ) GetArmstrong_1992_fig_6a_Al  (Data);
@@ -77,6 +77,9 @@ int rmc_data::get_experimental_data(int Year, const char* Target, const char* Re
   }
   else if (Year == 1991) {
     if      (target == "Ca40") GetArmstrong_1991_fig_18_Ca40(Data);
+  }
+  else if (Year == 1988) {
+    if (target == "O16") GetFrischknecht_1988_O16_table_II(Data);
   }
 //-----------------------------------------------------------------------------
 // force response, if it was requested explicitly

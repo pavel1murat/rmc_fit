@@ -12,6 +12,19 @@ public:
     TH1F*  fHist;                     // data histogram
     double  (*fResp)(double,double);  // response function: prob(Etrue,Emeas)
   };
+
+  struct Resp92_t {
+    double ps0[3];
+    double ps1[3];
+    double ps2[3];
+    double ps3[3];
+    double pa [4];
+    double pfa[3];
+    double pe0[2][3];
+  } r92;
+  
+  struct Resp98_t {
+  } r98;
   
   rmc_data();
   ~rmc_data();
@@ -22,8 +35,30 @@ public:
 // response parameterization
 //-----------------------------------------------------------------------------
   static double  delta_function_response(double E, double Er);
+
+  static double  r92_sigma0  (double E);
+  static double  r92_sigma1  (double E);
+  static double  r92_sigma2  (double E);
+  static double  r92_sigma3  (double E);
+  static double  r92_a       (double E);
+  static double  r92_f_over_a(double E);
+  static double  r92_e0      (double E);
+  static double  r92_e1      (double E);
+  static double  r92_e2      (double E);
+  static double  r92_e3      (double E);
+
   static double  triumf_response_1992   (double E, double Er);
+
+  static double  r98_sigma0  (double E);
+  static double  r98_sigma2  (double E);
+  static double  r98_a       (double E);
+  static double  r98_alp     (double E);
+  static double  r98_e0      (double E);
+  static double  r98_e1      (double E);
+  static double  r98_e2      (double E);
+  
   static double  triumf_response_1998   (double E, double Er);
+
   int            get_response_function  (const char* Response, double (**f)(double,double));
 //-----------------------------------------------------------------------------
 // same response parameterization, different format - for TF1's and ROOT fits
@@ -77,6 +112,12 @@ public:
 // GetFrischknecht'1985 PRC - Ca40
 //-----------------------------------------------------------------------------
   int GetFrischknecht_1985_Ca40_table_IV(Data_t* Data);
+  
+//-----------------------------------------------------------------------------
+// test functions - choose large number of bins by default - to not think about it
+//-----------------------------------------------------------------------------
+  void plot_r92(const char* Parameter, double EMin, double EMax, int NBins=1000);
+  void plot_r98(const char* Parameter, double EMin, double EMax, int NBins=1000);
   
   ClassDef(rmc_data,0)
 };

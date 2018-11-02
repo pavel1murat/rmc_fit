@@ -37,13 +37,21 @@ public:
 
 					// fit functions
   
-  void          fit            (int Year, const char* Target, const char* ResponseModel,
-				double KMax = 90., double MinFitE = 57., double MaxFitE = 100.);
+  void          fit  (int Year, const char* Target, const char* ResponseModel,
+		      double KMax = 90., double MinFitE = 57., double MaxFitE = 100.);
 
-  void          scan_kmax_range(int Year, const char* Target, const char* ResponseModel,
-				double EMin, double EMax,
-				int NSteps=10, double MinFitE = 57, double MaxFitE=100);
-
+  void          nfit (int Year, const char* Target, const char* ResponseModel,
+		      double KMax = 90., double MinFitE = 57., double MaxFitE = 100.);
+  
+  void          scan (int Year, const char* Target, const char* ResponseModel,
+		      double EMin, double EMax,
+		      int NSteps=10, double MinFitE = 57, double MaxFitE=100);
+  
+  void          nscan(int Year, const char* Target, const char* ResponseModel,
+		      double EMin, double EMax,
+		      int NSteps=10, double MinFitE = 57, double MaxFitE=100);
+  
+  void          nchi2(const TH1F* Hist, const TF1* Func, double* Chi2, int* NDof);
 //-----------------------------------------------------------------------------
 // test functions
 //-----------------------------------------------------------------------------
