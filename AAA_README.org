@@ -1,0 +1,38 @@
+# 
+
+ *building and running:*
+
+  1. clone rmc_fit to a release area which has STNTUPLE (any version >= v7_2_0 tag,
+     which has 'smooth' class added) checked out
+
+     git clone https://github.com/pavel1murat/rmc_fit.git
+
+  2. assuming mu2e environment has been setup, simply run scons to build the library:
+
+     scons 
+
+  3. to run a kMax scan for a given spectrum:
+
+     root.exe
+     .L lib/librmc_fit_ana.so
+     r = new rmc_fit()
+     r->scan(1992,"Al","1998",85,95,20)
+
+    see rmc_fit/ana/ana/rmc_fit.hh for the interface, it is more or less self-explanatory
+
+
+  4. *More details*
+  ----------------
+
+  4.1 a spectrum to fit is specified by a year and a nuclear target
+      see rmc_fit/ana/rmc_data.cc  (rmc_data::get_experiments_data)
+      for the list of avalable year/target combinations
+
+  4.2 the response is either "1992" or "1998" (tagged by the publication year),
+      it chooses the response function
+
+
+
+     
+
+     
