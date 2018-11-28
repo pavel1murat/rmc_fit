@@ -17,8 +17,8 @@ helper.handle_dictionaries();
 
 skip_list     = []
 
-stntuple_libs = [];
-murat_libs    = ["murat_plot"]
+stntuple_libs = ["Stntuple_alg"];
+murat_libs    = []
 
 libs          = stntuple_libs + murat_libs + [
                 rootlibs,

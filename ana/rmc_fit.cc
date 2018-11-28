@@ -2,7 +2,7 @@
 // T.P.Gorringe et al Phys Rev C v58 i3 p 1767 (1998 ) . Armstrong
 // data for 1mm converter
 ///////////////////////////////////////////////////////////////////////////////
-#include "murat/plot/smooth.hh"
+#include "Stntuple/alg/smooth.hh"
 #include "ana/rmc_fit.hh"
 #include "TCanvas.h"
 #include "Getline.h"
