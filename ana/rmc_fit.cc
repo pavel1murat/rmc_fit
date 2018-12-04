@@ -15,6 +15,11 @@ rmc_fit::rmc_fit(const char* Name): TNamed(Name,Name) {
   fData.fResp = nullptr;
   fNCanvases  = 0;
   fNFunctions = 0;
+
+  fNSamples   = 10000;
+
+  fEMin       = 50.;
+
 }
 
 //-----------------------------------------------------------------------------
@@ -103,10 +108,10 @@ int rmc_fit::get_convoluted_closure_spectrum(double KMax,double Response(double,
   int    nj  = 10000;
   double qnj = nj;
 
-  for (int i=1; i<=1000; i++) {
+  for (int i=1; i<=1100; i++) {
     double e = (i-1/2)*0.1;
 
-    if (e < 40) continue;
+    if (e < 50) continue;       // this cut-off is essential for the spectrum shape at low energies
 
     double w = f_closure->Eval(e);
 
@@ -266,17 +271,17 @@ void rmc_fit::fit(int         Year         ,
 
 
 //-----------------------------------------------------------------------------
-void rmc_fit::nchi2(const TH1F* Hist, const TF1* Func, double* Chi2, int* NPt) {
+void rmc_fit::nchi2(const TH1F* Hist, const TF1* Func, double MinFitE, double MaxFitE, double* Chi2, int* NPt) {
   *Chi2 = 0;
   *NPt  = 0;
   
   int nb = Hist->GetNbinsX();
 
   for (int i=1; i<=nb; i++) {
-    float x = Hist->GetBinCenter(i);
-    if (x < 57) continue;
+    float e = Hist->GetBinCenter(i);
+    if ((e < MinFitE) || (e >= MaxFitE)) continue;
     float y  = Hist->GetBinContent(i);
-    float fy = Func->Eval(x);
+    float fy = Func->Eval(e);
 					// skip empty bins, assume gaussian statistics
     if (y > 0) {
       double dy = fy-y;
@@ -322,7 +327,8 @@ void rmc_fit::nfit(int         Year         ,
   fNCanvases++;
   TCanvas* c = new TCanvas(Form("c_%s_%i",GetName(),fNCanvases),"fit",1200,700);
 
-  fData.fHist->Draw();
+  fData.fHist->SetMarkerStyle(20);
+  fData.fHist->Draw("ep");
   f->Draw("sames");
 
   c->Modified();
@@ -331,7 +337,7 @@ void rmc_fit::nfit(int         Year         ,
   double chi2;
   int ndof;
 
-  nchi2(fData.fHist, f, &chi2, &ndof);
+  nchi2(fData.fHist, f, MinFitE, MaxFitE, &chi2, &ndof);
     
   printf("kMax, chi2, ndof, chi2/ndof: %12.5f %12.5e %3i %12.5e\n",
 	 KMax, chi2, ndof, chi2/(ndof-1)); 
@@ -400,7 +406,7 @@ void rmc_fit::scan(int Year, const char* Target, const char* ResponseModel,
     //    c_fit->Update();
     //    Getline("hit <RETURN>");
     
-    //    fData.fHist->Fit(f[i],"QL","",MinFitE,MaxFitE);
+    //    fData.fHist->Fit(f[i],"Q","",MinFitE,MaxFitE);
     fData.fHist->Fit(f[i],"Q","",MinFitE,MaxFitE);
     
     //    c_fit->Modified();
@@ -523,7 +529,7 @@ void rmc_fit::nscan(int Year, const char* Target, const char* ResponseModel,
     //    c_fit->Update();
     //    Getline("hit <RETURN>");
     
-    nchi2(fData.fHist,f[i], &chi2[i], &ndof[i]);
+    nchi2(fData.fHist,f[i], MinFitE, MaxFitE, &chi2[i], &ndof[i]);
     
     //    c_fit->Modified();
     //    c_fit->Update();

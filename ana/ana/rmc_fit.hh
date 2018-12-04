@@ -19,6 +19,8 @@ public:
   rmc_data::Data_t fData;
   int              fNCanvases;
   int              fNFunctions;
+  int              fNSamples;
+  double           fEMin;
 //  -----------------------------------------------------------------------------
 // functions
 //-----------------------------------------------------------------------------
@@ -51,7 +53,8 @@ public:
 		      double EMin, double EMax,
 		      int NSteps=10, double MinFitE = 57, double MaxFitE=100);
   
-  void          nchi2(const TH1F* Hist, const TF1* Func, double* Chi2, int* NDof);
+  void          nchi2(const TH1F* Hist, const TF1* Func, double MinFitE, double MaxFitE, 
+		      double* Chi2, int* NDof);
 //-----------------------------------------------------------------------------
 // test functions
 //-----------------------------------------------------------------------------
