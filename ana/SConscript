@@ -8,22 +8,25 @@ Import('stntuple_helper')
 #------------------------------------------------------------------------------
 # 2016-10-10: STNTUPLE link: add ROOT 'EG' library after 'Physics' library
 #------------------------------------------------------------------------------
-rootlibs = env['ROOTLIBS']
-if ( not ("EG"   in rootlibs)): rootlibs.insert(rootlibs.index("Physics")+1,"EG");
+def local_build():
+    local_env = env.Clone();
+    rootlibs  = local_env['ROOTLIBS']
+    if ( not ("EG"   in rootlibs)): rootlibs.insert(rootlibs.index("Physics")+1,"EG");
 
-helper = stntuple_helper(env);
+    helper = stntuple_helper(local_env);
 
-helper.handle_dictionaries();
+    helper.handle_dictionaries();
 
-skip_list     = []
+    skip_list     = []
 
-stntuple_libs = ["Stntuple_alg"];
-murat_libs    = []
+    stntuple_libs = ["Stntuple_alg"];
+    murat_libs    = []
 
-libs          = stntuple_libs + murat_libs + [
-                rootlibs,
-                ];
+    libs          = stntuple_libs + murat_libs + [ rootlibs, ];
 
-list_of_cc_files = Glob('*.cc',strings=True);
-helper.build_libs(list_of_cc_files,skip_list,libs);
+    list_of_cc_files = Glob('*.cc',strings=True);
+    helper.build_libs(list_of_cc_files,skip_list,libs);
+
+#------------------------------------------------------------------------------    
 # print "tmpdir:"+env['TMP_LIB_DIR']
+local_build()

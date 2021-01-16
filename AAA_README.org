@@ -21,6 +21,13 @@
     see rmc_fit/ana/ana/rmc_fit.hh for the interface, it is more or less self-explanatory
 
 
+  4. how to plot a particular data set:
+
+     rmc_data::Data_t data;
+     rmc_data* x = new rmc_data();
+     x->get_experimental_data(1995,"Al",0,&data)
+     data.fHist->Draw();
+
   4. *More details*
   ----------------
 
@@ -31,6 +38,9 @@
   4.2 the response is either "1992" or "1998" (tagged by the publication year),
       it chooses the response function
 
+  4.3 year: 1991, 1995
+
+  
 
 
      
